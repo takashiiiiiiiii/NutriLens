@@ -77,38 +77,29 @@ async function analyze() {
   document.getElementById('analyze-btn').disabled = true;
 
   const cookDesc = cookingDescriptions[selectedCook];
-  const prompt = `You are a nutrition expert. Analyze this food image. The food was prepared: ${cookDesc}. Identify each ingredient/food item visible, estimate portions, and calculate calories. Respond ONLY in this exact JSON format (no markdown, no explanation): { "meal_name": "short descriptive name", "ingredients": [ {"name": "ingredient name", "amount": "estimated amount", "calories": 123} ], "total_calories": 456, "protein_g": 12, "carbs_g": 34, "fat_g": 10, "notes": "one short sentence tip or note" }`;
+  const prompt = `You are a nutrition expert. Analyze this food image. The food was prepared: ${cookDesc}. Identify each ingredient, estimate portions, calculate calories, respond ONLY in JSON format.`;
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('/api/analyze', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-API-Key': 'YOUR_API_KEY_HERE'  // ←ここにClaude APIキーを入れる
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{
-          role: 'user',
-          content: [
-            { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: currentImageBase64 } },
-            { type: 'text', text: prompt }
-          ]
-        }]
+        messages: [
+          { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: currentImageBase64 } },
+          { type: 'text', text: prompt }
+        ]
       })
     });
 
     const data = await res.json();
-    const text = data.content.map(c => c.text || '').join('');
-    const clean = text.replace(/```json|```/g, '').trim();
-    const parsed = JSON.parse(clean);
+    const text = data.content?.map(c => c.text || '').join('') || '{}';
+    const parsed = JSON.parse(text);
     currentResult = parsed;
     showResult(parsed);
 
   } catch (err) {
     showError('Could not analyze the image. Please try again.');
-    console.error(err);
   } finally {
     document.getElementById('loading-card').style.display = 'none';
     document.getElementById('analyze-btn').disabled = false;
