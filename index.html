@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NutriLens — AI Calorie Tracker</title>
+  
+  <!-- フォント -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="logo">Nutri<span>Lens</span></div>
+    <div class="daily-badge" id="header-cal">Today: 0 kcal</div>
+  </header>
+
+  <main>
+    <!-- Upload -->
+    <div class="upload-card" id="upload-card">
+      <input type="file" accept="image/*" id="file-input">
+      <div class="upload-icon">📸</div>
+      <h2>Drop your meal photo here</h2>
+      <p>or click to browse — JPG, PNG, HEIC supported</p>
+    </div>
+    <div id="preview-wrap">
+      <img id="preview-img" src="" alt="Food preview">
+      <button class="change-btn" onclick="resetImage()">Change photo</button>
+    </div>
+
+    <!-- Cooking method -->
+    <div class="options-card">
+      <h3>How was it prepared?</h3>
+      <div class="cooking-options">
+        <button class="cook-btn selected" data-val="raw" onclick="selectCook(this)">🥗 Raw / uncooked</button>
+        <button class="cook-btn" data-val="steamed" onclick="selectCook(this)">💨 Steamed / boiled</button>
+        <button class="cook-btn" data-val="grilled" onclick="selectCook(this)">🔥 Grilled / roasted</button>
+        <button class="cook-btn" data-val="butter" onclick="selectCook(this)">🧈 Cooked with butter</button>
+        <button class="cook-btn" data-val="oil" onclick="selectCook(this)">🫙 Cooked with oil</button>
+        <button class="cook-btn" data-val="seasoned" onclick="selectCook(this)">🧂 Seasoned / marinated</button>
+      </div>
+    </div>
+
+    <div class="error-msg" id="error-msg"></div>
+    <button class="analyze-btn" id="analyze-btn" onclick="analyze()" disabled>✨ Analyze Calories</button>
+
+    <!-- Loading -->
+    <div class="loading-card" id="loading-card">
+      <div class="loader"></div>
+      <p style="color:var(--muted); font-size:0.9rem;">Analyzing your meal with AI…</p>
+    </div>
+
+    <!-- Result -->
+    <div class="result-card" id="result-card">
+      <div class="result-header">
+        <h3 id="result-title">Analysis Result</h3>
+        <div class="calorie-pill" id="total-cal">— kcal</div>
+      </div>
+      <div class="result-body">
+        <div class="ingredients-list" id="ingredients-list"></div>
+        <div class="macros-grid">
+          <div class="macro-box"><span class="macro-val" id="macro-protein">—</span><span class="macro-label">Protein</span></div>
+          <div class="macro-box"><span class="macro-val" id="macro-carbs">—</span><span class="macro-label">Carbs</span></div>
+          <div class="macro-box"><span class="macro-val" id="macro-fat">—</span><span class="macro-label">Fat</span></div>
+        </div>
+        <button class="save-meal-btn" onclick="saveMeal()">＋ Add to today's log</button>
+      </div>
+    </div>
+
+    <!-- History -->
+    <div class="history-card">
+      <div class="history-header">
+        <h3>Today's Meal Log</h3>
+        <button class="clear-btn" onclick="clearHistory()">Clear all</button>
+      </div>
+      <div id="history-body">
+        <div class="history-empty">No meals logged yet</div>
+      </div>
+      <div class="daily-total" id="daily-total" style="display:none">
+        <span class="daily-total-label">Total today</span>
+        <span class="daily-total-val" id="daily-total-val">0 kcal</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- JS -->
+  <script src="script.js"></script>
+</body>
+</html>
